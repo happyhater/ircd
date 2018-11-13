@@ -223,7 +223,6 @@ rehash_help(struct Client *source_p)
 			     get_oper_name(source_p));
 	if (!MyConnect(source_p))
 		remote_rehash_oper_p = source_p;
-	load_help();
 }
 
 static void
