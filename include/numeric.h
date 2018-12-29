@@ -20,6 +20,8 @@ extern const char *form_str(int);
 #define RPL_MYINFO           004
 #define RPL_ISUPPORT         005
 
+#define RPL_HELLO 20
+
 #define RPL_SNOMASK	     8
 
 #define RPL_REDIR            10
