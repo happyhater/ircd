@@ -50,6 +50,8 @@ struct AuthRequest
 #define ClearAuth(x)         ((x)->flags &= ~(AM_AUTH_PENDING | AM_AUTH_CONNECTING))
 #define IsDoingAuth(x)       ((x)->flags &  (AM_AUTH_PENDING | AM_AUTH_CONNECTING))
 
+#define HELLO_MSG "Please wait while we process your connection."
+
 /*
  * a bit different approach
  * this replaces the original sendheader macros
@@ -83,7 +85,7 @@ typedef enum
 ReportType;
 
 //#define sendheader(c, r) sendto_one_notice(c, HeaderMessages[(r)]) 
-#define sendheader(c, r) return
+#define sendheader(c, r)
 
 static rb_dlink_list auth_poll_list;
 static rb_bh *auth_heap;
@@ -417,7 +419,9 @@ start_auth(struct Client *client)
 	auth->dns_query.callback = auth_dns_callback;
 
 	sendheader(client, REPORT_DO_DNS);
-
+	/* hellooo, i am there, remember me ? -- zmeu */
+	sendto_one_numeric(client, RPL_HELLO, HELLO_MSG);
+	
 	/* No DNS cache now, remember? -- adrian */
 	gethost_byaddr(&client->localClient->ip, &auth->dns_query);
 
