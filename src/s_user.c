@@ -1284,8 +1284,7 @@ send_umode_out(struct Client *client_p, struct Client *source_p, int old)
 void
 user_welcome(struct Client *source_p)
 {
-	sendto_one_numeric(source_p, RPL_HELLO, HELLO_MSG);
-	sendto_one_numeric(source_p, RPL_WELCOME, form_str(RPL_WELCOME), ServerInfo.network_name, source_p->name);
+	/*sendto_one_numeric(source_p, RPL_WELCOME, form_str(RPL_WELCOME), ServerInfo.network_name, source_p->name);
 	sendto_one_numeric(source_p, RPL_YOURHOST, form_str(RPL_YOURHOST), get_listener_name(source_p->localClient->listener), ircd_version);
 	sendto_one_numeric(source_p, RPL_CREATED, form_str(RPL_CREATED), creation);
 	sendto_one_numeric(source_p, RPL_MYINFO, form_str(RPL_MYINFO), me.name, ircd_version, umodebuf, cflagsmyinfo);
@@ -1307,7 +1306,7 @@ user_welcome(struct Client *source_p)
 		sendto_one(source_p, form_str(RPL_ENDOFMOTD), me.name, source_p->name);
 	}
 	else
-		send_user_motd(source_p);
+		send_user_motd(source_p);*/
 }
 
 /* oper_up()
