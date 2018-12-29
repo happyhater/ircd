@@ -262,7 +262,7 @@ AC_CHECK_TYPE(socklen_t, ,
 #include <sys/socket.h>])
 
 AC_ARG_ENABLE(ipv6,
-AC_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
+AC_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
 
 AC_SEARCH_LIBS(crypt, [crypt descrypt],,)
 
