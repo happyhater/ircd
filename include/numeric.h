@@ -1,3 +1,7 @@
+/* -- zmeu -- 29 Dec 2018 from zmeu@whitehats.net
+ * Added RPL_HELLO fixes
+ */
+
 #ifndef INCLUDED_numeric_h
 #define INCLUDED_numeric_h
 
@@ -20,7 +24,7 @@ extern const char *form_str(int);
 #define RPL_MYINFO           004
 #define RPL_ISUPPORT         005
 
-#define RPL_HELLO 20
+#define RPL_HELLO            20
 
 #define RPL_SNOMASK	     8
 
