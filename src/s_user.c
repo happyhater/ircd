@@ -1,3 +1,7 @@
+/* -- zmeu -- 29 Dec 2018 from zmeu@whitehats.net
+ * Removed user_welcome void
+ */
+
 #include "stdinc.h"
 #include "s_user.h"
 #include "channel.h"
@@ -28,8 +32,6 @@
 #include "blacklist.h"
 #include "substitution.h"
 #include "chmode.h"
-
-#define HELLO_MSG "Please wait while we process your connection."
 
 static void report_and_set_user_flags(struct Client *, struct ConfItem *);
 void user_welcome(struct Client *source_p);
