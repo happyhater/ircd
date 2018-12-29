@@ -1,3 +1,8 @@
+/*  -- zmeu -- 29 Dec 2018 from zmeu@whitehats.net
+ * Added several fixes
+ * Added HELLO_MSG fix
+ */
+
 #include "stdinc.h"
 #include "config.h"
 #include "s_auth.h"
