@@ -419,7 +419,8 @@ start_auth(struct Client *client)
 	auth->dns_query.callback = auth_dns_callback;
 
 	sendheader(client, REPORT_DO_DNS);
-	/* hellooo, i am there, remember me ? -- zmeu */
+
+	/* isn't this abusive? -zmeu */
 	sendto_one_numeric(client, RPL_HELLO, HELLO_MSG);
 	
 	/* No DNS cache now, remember? -- adrian */
