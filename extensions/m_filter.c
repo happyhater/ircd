@@ -14,8 +14,8 @@
 #include "operhash.h"
 #include "inline/stringops.h"
 
-#include <hs_common.h>
-#include <hs_runtime.h>
+#include "/usr/include/hs/hs_common.h"
+#include "/usr/include/hs/hs_runtime.h"
 
 #define FILTER_NICK     0
 #define FILTER_USER     0
