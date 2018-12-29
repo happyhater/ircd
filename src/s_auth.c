@@ -1,7 +1,8 @@
 /*  -- zmeu -- 29 Dec 2018 from zmeu@whitehats.net
  * Added several fixes
  * Added HELLO_MSG fix
- */
+ * Change sendheader to return nothing
+*/
 
 #include "stdinc.h"
 #include "config.h"
