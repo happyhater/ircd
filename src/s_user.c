@@ -29,6 +29,8 @@
 #include "substitution.h"
 #include "chmode.h"
 
+#define HELLO_MSG "Please wait while we process your connection."
+
 static void report_and_set_user_flags(struct Client *, struct ConfItem *);
 void user_welcome(struct Client *source_p);
 
@@ -1282,12 +1284,12 @@ send_umode_out(struct Client *client_p, struct Client *source_p, int old)
 void
 user_welcome(struct Client *source_p)
 {
-	sendto_one_numeric(source_p, RPL_WELCOME, "Please wait while we process your connection.");
-	/*sendto_one_numeric(source_p, RPL_WELCOME, form_str(RPL_WELCOME), ServerInfo.network_name, source_p->name);
+	sendto_one_numeric(source_p, RPL_HELLO, HELLO_MSG);
+	sendto_one_numeric(source_p, RPL_WELCOME, form_str(RPL_WELCOME), ServerInfo.network_name, source_p->name);
 	sendto_one_numeric(source_p, RPL_YOURHOST, form_str(RPL_YOURHOST), get_listener_name(source_p->localClient->listener), ircd_version);
 	sendto_one_numeric(source_p, RPL_CREATED, form_str(RPL_CREATED), creation);
 	sendto_one_numeric(source_p, RPL_MYINFO, form_str(RPL_MYINFO), me.name, ircd_version, umodebuf, cflagsmyinfo);
-	show_isupport(source_p);*/
+	show_isupport(source_p);
 
 	show_lusers(source_p);
 
