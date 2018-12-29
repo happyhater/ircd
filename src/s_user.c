@@ -1,5 +1,5 @@
 /* -- zmeu -- 29 Dec 2018 from zmeu@whitehats.net
- * Removed user_welcome void
+ * Removed user_welcome void and moved to s_auth.c into RPL_HELLO
  */
 
 #include "stdinc.h"
