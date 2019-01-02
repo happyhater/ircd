@@ -2,6 +2,8 @@
  * Added several fixes
  * Added HELLO_MSG fix
  * Change sendheader to return nothing
+ * -- zmeu -- 03 Jan 2019 from zmeu@whitehats.net
+ * fix bugs for some clients who can't see channels
 */
 
 #include "stdinc.h"
@@ -90,8 +92,7 @@ typedef enum
 }
 ReportType;
 
-//#define sendheader(c, r) sendto_one_notice(c, HeaderMessages[(r)]) 
-#define sendheader(c, r)
+#define sendheader(c, r) sendto_one_notice(c, HeaderMessages[(r)])
 
 static rb_dlink_list auth_poll_list;
 static rb_bh *auth_heap;
