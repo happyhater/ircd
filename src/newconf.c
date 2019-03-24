@@ -1511,15 +1511,6 @@ conf_set_general_hide_error_messages(void *data)
 }
 
 static void
-conf_set_general_kline_delay(void *data)
-{
-	ConfigFileEntry.kline_delay = *(unsigned int *) data;
-
-	/* THIS MUST BE HERE to stop us being unable to check klines */
-	kline_queued = 0;
-}
-
-static void
 conf_set_general_stats_k_oper_only(void *data)
 {
 	char *val = data;
