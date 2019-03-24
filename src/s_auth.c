@@ -215,9 +215,10 @@ auth_dns_callback(void *vptr, struct DNSReply *reply)
                         rb_strlcpy(auth->client->host, reply->h_name, sizeof(auth->client->host));
                 }
                 else if (strlen(reply->h_name) > HOSTLEN)
+			no_header = NULL;
         }
 	else
-                no_header(NULL);
+                no_header = NULL;
 
         release_auth_client(auth);
 }
