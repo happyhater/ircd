@@ -775,7 +775,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key, const char *
 	if(forward)
 		*forward = chptr->mode.forward;
 
-	if(chptr->mode.mode & MODE_INVITEONLY || (chptr->mode.mode & MODE_REGONLY && EmptyString(source_p->user->suser))
+	if(chptr->mode.mode & MODE_INVITEONLY)
 	{
 		RB_DLINK_FOREACH(invite, source_p->user->invited.head)
 		{
@@ -797,15 +797,16 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key, const char *
 					break;
 			}
 			if(ptr == NULL)
-				moduledata.approved = chptr->mode.mode & MODE_INVITEONLY ? ERR_INVITEONLYCHAN : ERR_NEEDREGGEDNICK;
+				moduledata.approved = ERR_INVITEONLYCHAN;
 		}
 	}
 
 	if(chptr->mode.limit &&
 	   rb_dlink_list_length(&chptr->members) >= (unsigned long) chptr->mode.limit)
 		i = ERR_CHANNELISFULL;
-
-	/* join throttling stuff --nenolod */
+	if(chptr->mode.mode & MODE_REGONLY && EmptyString(source_p->user->suser))
+		i = ERR_NEEDREGGEDNICK;
+	/* join throttling stuff */
 	else if(chptr->mode.join_num > 0 && chptr->mode.join_time > 0)
 	{
 		if ((rb_current_time() - chptr->join_delta <= 
