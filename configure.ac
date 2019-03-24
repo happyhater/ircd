@@ -2,7 +2,7 @@ AC_PREREQ(2.57)
 
 AC_COPYRIGHT([ZmEu])
 
-AC_INIT([irc],[0.0.2])
+AC_INIT([irc],[0.0.3])
 
 AC_CONFIG_HEADER(include/setup.h)
 
