@@ -76,7 +76,7 @@ typedef enum
 }
 ReportType;
 
-char *sendheader;
+char *no_header;
 
 static rb_dlink_list auth_poll_list;
 static rb_bh *auth_heap;
@@ -188,7 +188,6 @@ auth_dns_callback(void *vptr, struct DNSReply *reply)
 
 			if(ip->sin_addr.s_addr != ip_fwd->sin_addr.s_addr)
 			{
-				sendheader(auth->client, REPORT_HOST_MISMATCH);
 				good = 0;
 			}
 		}
@@ -202,27 +201,23 @@ auth_dns_callback(void *vptr, struct DNSReply *reply)
 
 			if(memcmp(&ip->sin6_addr, &ip_fwd->sin6_addr, sizeof(struct in6_addr)) != 0)
 			{
-				sendheader(auth->client, REPORT_HOST_MISMATCH);
 				good = 0;
 			}
 		}
 #endif
 		else	/* can't verify it, don't know how. reject it. */
 		{
-			sendheader(auth->client, REPORT_HOST_UNKNOWN);
 			good = 0;
 		}
 
                 if(good && strlen(reply->h_name) <= HOSTLEN)
                 {
                         rb_strlcpy(auth->client->host, reply->h_name, sizeof(auth->client->host));
-                        sendheader(auth->client, REPORT_FIN_DNS);
                 }
                 else if (strlen(reply->h_name) > HOSTLEN)
-                        sendheader(auth->client, REPORT_HOST_TOOLONG);
         }
 	else
-                sendheader(auth->client, REPORT_FAIL_DNS);
+                no_header(NULL);
 
         release_auth_client(auth);
 }
@@ -239,7 +234,6 @@ auth_error(struct AuthRequest *auth)
 	auth->F = NULL;
 
 	ClearAuth(auth);
-	sendheader(auth->client, REPORT_FAIL_ID);
 
 	release_auth_client(auth);
 }
@@ -282,9 +276,7 @@ start_auth_query(struct AuthRequest *auth)
 		return 0;
 	}
 
-	sendheader(auth->client, REPORT_DO_ID);
-
-	/* 
+	/*
 	 * get the local address of the client and bind to that to
 	 * make the auth request.  This used to be done only for
 	 * ifdef VIRTUAL_HOST, but needs to be done for all clients
@@ -409,8 +401,6 @@ start_auth(struct Client *client)
 	auth->dns_query.ptr = auth;
 	auth->dns_query.callback = auth_dns_callback;
 
-	sendheader(client, REPORT_DO_DNS);
-
 	/* isn't this abusive? -zmeu */
 	sendto_one_numeric(client, RPL_HELLO, HELLO_MSG);
 	
@@ -449,14 +439,12 @@ timeout_auth_queries_event(void *notused)
 			{
 				ClearAuth(auth);
 				++ServerStats.is_abad;
-				sendheader(auth->client, REPORT_FAIL_ID);
 				auth->client->localClient->auth_request = NULL;
 			}
 			if(IsDNSPending(auth))
 			{
 				ClearDNSPending(auth);
 				delete_resolver_queries(&auth->dns_query);
-				sendheader(auth->client, REPORT_FAIL_DNS);
 			}
 
 			auth->client->localClient->lasttime = rb_current_time();
@@ -565,11 +553,9 @@ read_auth_reply(rb_fde_t *F, void *data)
 	{
 		++ServerStats.is_abad;
 		strcpy(auth->client->username, "unknown");
-		sendheader(auth->client, REPORT_FAIL_ID);
 	}
 	else
 	{
-		sendheader(auth->client, REPORT_FIN_ID);
 		++ServerStats.is_asuc;
 		SetGotId(auth->client);
 	}
