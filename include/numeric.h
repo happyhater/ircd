@@ -298,6 +298,7 @@ extern const char *form_str(int);
 
 #define RPL_STARTTLS         670 /* tls-3.1 --zmeu */
 #define RPL_WHOISSECURE      671 /* Unreal3.2 */
+#define ERR_STARTTLS         691 /* tls-3.2 --zmeu */
 
 #define RPL_MODLIST          702
 #define RPL_ENDOFMODLIST     703
