@@ -121,11 +121,11 @@ mo_resv(struct Client *client_p, struct Client *source_p, int parc, const char *
 	else if(!propagated && rb_dlink_list_length(&cluster_conf_list) > 0)
 		cluster_resv(source_p, temp_time, name, reason);
 
-	/*if(propagated && temp_time == 0)
+	if(propagated && temp_time == 0)
 	{
 		sendto_one_notice(source_p, ":Cannot set a permanent global ban");
 		return 0;
-	}*/
+	}
 
 	parse_resv(source_p, name, reason, temp_time, propagated);
 
