@@ -4,6 +4,8 @@
  * Change sendheader to return nothing
  * -- zmeu -- 03 Jan 2019 from zmeu@whitehats.net
  * fix bugs for some clients who can't see channels
+ * -- zmeu -- 24 March 2019 from zmeu@whitehat.ro
+ * finally remove sendheader
 */
 
 #include "stdinc.h"
@@ -60,24 +62,6 @@ struct AuthRequest
 
 #define HELLO_MSG "Please wait while we process your connection."
 
-/*
- * a bit different approach
- * this replaces the original sendheader macros
- */
-
-static const char *HeaderMessages[] =
-{
-	":*** Looking up your hostname...",
-	":*** Found your hostname",
-	":*** Couldn't look up your hostname",
-	":*** Checking Ident",
-	":*** Got Ident response",
-	":*** No Ident response",
-	":*** Your hostname is too long, ignoring hostname",
-	":*** Your forward and reverse DNS do not match, ignoring hostname",
-	":*** Cannot verify hostname validity, ignoring hostname",
-};
-
 typedef enum
 {
 	REPORT_DO_DNS,
@@ -92,7 +76,7 @@ typedef enum
 }
 ReportType;
 
-#define sendheader(c, r) sendto_one_notice(c, HeaderMessages[(r)])
+char *sendheader;
 
 static rb_dlink_list auth_poll_list;
 static rb_bh *auth_heap;
@@ -187,7 +171,7 @@ auth_dns_callback(void *vptr, struct DNSReply *reply)
 		rb_dlinkDelete(&auth->node, &auth_poll_list);
 		free_auth_request(auth);
 
-		/* and they will silently drop through and all will hopefully be ok... -nenolod */
+		/* and they will silently drop through and all will hopefully be ok... */
 		return;
 	}
 
@@ -204,7 +188,7 @@ auth_dns_callback(void *vptr, struct DNSReply *reply)
 
 			if(ip->sin_addr.s_addr != ip_fwd->sin_addr.s_addr)
 			{
-				//sendheader(auth->client, REPORT_HOST_MISMATCH);
+				sendheader(auth->client, REPORT_HOST_MISMATCH);
 				good = 0;
 			}
 		}
@@ -218,27 +202,27 @@ auth_dns_callback(void *vptr, struct DNSReply *reply)
 
 			if(memcmp(&ip->sin6_addr, &ip_fwd->sin6_addr, sizeof(struct in6_addr)) != 0)
 			{
-				//sendheader(auth->client, REPORT_HOST_MISMATCH);
+				sendheader(auth->client, REPORT_HOST_MISMATCH);
 				good = 0;
 			}
 		}
 #endif
 		else	/* can't verify it, don't know how. reject it. */
 		{
-			//sendheader(auth->client, REPORT_HOST_UNKNOWN);
+			sendheader(auth->client, REPORT_HOST_UNKNOWN);
 			good = 0;
 		}
 
                 if(good && strlen(reply->h_name) <= HOSTLEN)
                 {
                         rb_strlcpy(auth->client->host, reply->h_name, sizeof(auth->client->host));
-                        //sendheader(auth->client, REPORT_FIN_DNS);
+                        sendheader(auth->client, REPORT_FIN_DNS);
                 }
                 else if (strlen(reply->h_name) > HOSTLEN)
-                        //sendheader(auth->client, REPORT_HOST_TOOLONG);
+                        sendheader(auth->client, REPORT_HOST_TOOLONG);
         }
 	else
-                //sendheader(auth->client, REPORT_FAIL_DNS);
+                sendheader(auth->client, REPORT_FAIL_DNS);
 
         release_auth_client(auth);
 }
@@ -255,13 +239,13 @@ auth_error(struct AuthRequest *auth)
 	auth->F = NULL;
 
 	ClearAuth(auth);
-	//sendheader(auth->client, REPORT_FAIL_ID);
-		
+	sendheader(auth->client, REPORT_FAIL_ID);
+
 	release_auth_client(auth);
 }
 
 /*
- * start_auth_query - Flag the client to show that an attempt to 
+ * start_auth_query - Flag the client to show that an attempt to
  * contact the ident server on
  * the client's host.  The connect and subsequently the socket are all put
  * into 'non-blocking' mode.  Should the connect or any later phase of the
@@ -287,7 +271,7 @@ start_auth_query(struct AuthRequest *auth)
 	}
 
 	/*
-	 * TBD: this is a pointless arbitrary limit .. we either have a socket or not. -nenolod
+	 * TBD: this is a pointless arbitrary limit .. we either have a socket or not.
 	 */
 	if((maxconnections - 10) < rb_get_fd(F))
 	{
@@ -298,7 +282,7 @@ start_auth_query(struct AuthRequest *auth)
 		return 0;
 	}
 
-	//sendheader(auth->client, REPORT_DO_ID);
+	sendheader(auth->client, REPORT_DO_ID);
 
 	/* 
 	 * get the local address of the client and bind to that to
@@ -425,7 +409,7 @@ start_auth(struct Client *client)
 	auth->dns_query.ptr = auth;
 	auth->dns_query.callback = auth_dns_callback;
 
-	//sendheader(client, REPORT_DO_DNS);
+	sendheader(client, REPORT_DO_DNS);
 
 	/* isn't this abusive? -zmeu */
 	sendto_one_numeric(client, RPL_HELLO, HELLO_MSG);
@@ -465,14 +449,14 @@ timeout_auth_queries_event(void *notused)
 			{
 				ClearAuth(auth);
 				++ServerStats.is_abad;
-				//sendheader(auth->client, REPORT_FAIL_ID);
+				sendheader(auth->client, REPORT_FAIL_ID);
 				auth->client->localClient->auth_request = NULL;
 			}
 			if(IsDNSPending(auth))
 			{
 				ClearDNSPending(auth);
 				delete_resolver_queries(&auth->dns_query);
-				//sendheader(auth->client, REPORT_FAIL_DNS);
+				sendheader(auth->client, REPORT_FAIL_DNS);
 			}
 
 			auth->client->localClient->lasttime = rb_current_time();
@@ -581,11 +565,11 @@ read_auth_reply(rb_fde_t *F, void *data)
 	{
 		++ServerStats.is_abad;
 		strcpy(auth->client->username, "unknown");
-		//sendheader(auth->client, REPORT_FAIL_ID);
+		sendheader(auth->client, REPORT_FAIL_ID);
 	}
 	else
 	{
-		//sendheader(auth->client, REPORT_FIN_ID);
+		sendheader(auth->client, REPORT_FIN_ID);
 		++ServerStats.is_asuc;
 		SetGotId(auth->client);
 	}
