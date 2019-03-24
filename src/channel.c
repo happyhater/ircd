@@ -1,3 +1,7 @@
+/*  -- zmeu -- 24 March 2019 from zmeu@whitehat.ro
+ * Allow invexes to bypass +r
+*/
+
 #include "stdinc.h"
 #include "channel.h"
 #include "chmode.h"
@@ -771,7 +775,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key, const char *
 	if(forward)
 		*forward = chptr->mode.forward;
 
-	if(chptr->mode.mode & MODE_INVITEONLY)
+	if(chptr->mode.mode & MODE_INVITEONLY || (chptr->mode.mode & MODE_REGONLY && EmptyString(source_p->user->suser))
 	{
 		RB_DLINK_FOREACH(invite, source_p->user->invited.head)
 		{
@@ -793,15 +797,14 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key, const char *
 					break;
 			}
 			if(ptr == NULL)
-				moduledata.approved = ERR_INVITEONLYCHAN;
+				moduledata.approved = chptr->mode.mode & MODE_INVITEONLY ? ERR_INVITEONLYCHAN : ERR_NEEDREGGEDNICK;
 		}
 	}
 
 	if(chptr->mode.limit &&
 	   rb_dlink_list_length(&chptr->members) >= (unsigned long) chptr->mode.limit)
 		i = ERR_CHANNELISFULL;
-	if(chptr->mode.mode & MODE_REGONLY && EmptyString(source_p->user->suser))
-		i = ERR_NEEDREGGEDNICK;
+
 	/* join throttling stuff --nenolod */
 	else if(chptr->mode.join_num > 0 && chptr->mode.join_time > 0)
 	{
