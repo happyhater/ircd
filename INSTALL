@@ -1,4 +1,12 @@
-apt-get install build-essential libpcre3 libpcre3-dev libssl-dev gcc byacc flex bison
+DEBIAN VERSION:
+
+apt-get install build-essential libpcre3 libpcre3-dev libssl-dev gcc byacc flex bison autoconf libcap2-bin -y
+
+useradd -m ircd
+
+su ircd
+
+(download there the zipfile & unzip there)
 
 autoconf
 
@@ -8,108 +16,4 @@ make
 
 make install
 
-mv chm_adminonly.so ../autoload
-mv chm_operonly.so ../autoload
-mv chm_operonly_compat.so ../autoload
-mv chm_quietunreg_compat.so ../autoload
-mv chm_sslonly.so ../autoload
-mv chm_sslonly_compat.so ../autoload
-mv extb_account.so ../autoload
-mv extb_canjoin.so ../autoload
-mv extb_channel.so ../autoload
-mv extb_extgecos.so ../autoload
-mv extb_oper.so ../autoload
-mv extb_realname.so ../autoload
-mv extb_server.so ../autoload
-mv extb_ssl.so ../autoload
-mv force_user_invis.so ../autoload
-mv hints.so ../autoload
-mv identify_msg.so ../autoload
-mv m_accept.so ../autoload
-mv m_admin.so ../autoload
-mv m_adminwall.so ../autoload
-mv m_away.so ../autoload
-mv m_cap.so ../autoload
-mv m_capab.so ../autoload
-mv m_certfp.so ../autoload
-mv m_challenge.so ../autoload
-mv m_chghost.so ../autoload
-mv m_close.so ../autoload
-mv m_cmessage.so ../autoload
-mv m_connect.so ../autoload
-mv m_dehelper.so ../autoload
-mv m_dline.so ../autoload
-mv m_etrace.so ../autoload
-mv m_extendchans.so ../autoload
-mv m_filter.so ../autoload
-mv m_findforwards.so ../autoload
-mv m_grant.so ../autoload
-mv m_invex_regonly.so ../autoload
-mv m_invite.so ../autoload
-mv m_ison.so ../autoload
-mv m_kline.so ../autoload
-mv m_knock.so ../autoload
-mv m_links.so ../autoload
-mv m_list.so ../autoload
-mv m_listenoff.so ../autoload
-mv m_locops.so ../autoload
-mv m_lusers.so ../autoload
-mv m_map.so ../autoload
-mv m_monitor.so ../autoload
-mv m_motd.so ../autoload
-mv m_names.so ../autoload
-mv m_ojoin.so ../autoload
-mv m_okick.so ../autoload
-mv m_olist.so ../autoload
-mv m_omode.so ../autoload
-mv m_oper.so ../autoload
-mv m_operspy.so ../autoload
-mv m_opme.so ../autoload
-mv m_pass.so ../autoload
-mv m_ping.so ../autoload
-mv m_pong.so ../autoload
-mv m_post.so ../autoload
-mv m_privs.so ../autoload
-mv m_rehash.so ../autoload
-mv m_restart.so ../autoload
-mv m_resv.so ../autoload
-mv m_sasl.so ../autoload
-mv m_scan.so ../autoload
-mv m_sendbans.so ../autoload
-mv m_services.so ../autoload
-mv m_set.so ../autoload
-mv m_signon.so ../autoload
-mv m_snote.so ../autoload
-mv m_stats.so ../autoload
-mv m_svinfo.so ../autoload
-mv m_tb.so ../autoload
-mv m_time.so ../autoload
-mv m_topic.so ../autoload
-mv m_trace.so ../autoload
-mv m_unreject.so ../autoload
-mv m_user.so ../autoload
-mv m_userhost.so ../autoload
-mv m_users.so ../autoload
-mv m_wallops.so ../autoload
-mv m_webirc.so ../autoload
-mv m_who.so ../autoload
-mv m_whois.so ../autoload
-mv m_whowas.so ../autoload
-mv m_xline.so ../autoload
-mv make_override_immune.so ../autoload
-mv no_locops.so ../autoload
-mv override.so ../autoload
-mv sno_channelcreate.so ../autoload
-mv sno_farconnect.so ../autoload
-mv sno_globalkline.so ../autoload
-mv sno_globalnickchange.so ../autoload
-mv sno_globaloper.so ../autoload
-mv sno_routing.so ../autoload
-mv sno_whois.so ../autoload
-mv spy_admin_notice.so ../autoload
-mv spy_info_notice.so ../autoload
-mv spy_links_notice.so ../autoload
-mv spy_motd_notice.so ../autoload
-mv spy_stats_notice.so ../autoload
-mv spy_stats_p_notice.so ../autoload
-mv spy_trace_notice.so ../autoload
+setcap CAP_NET_BIND_SERVICE=+eip /home/ircd/ircd/bin/ircd
